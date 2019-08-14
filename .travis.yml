@@ -4,7 +4,8 @@ services:
   - docker
 
 before_install:
-  - docker build -t nimiq/docker-react -f ./section7/frontend/Dockerfile.dev ./section7/frontend
+  - cd ./section7/frontend # Change dir because that is where the src is. Usually you don't need this.
+  - docker build -t nimiq/docker-react -f Dockerfile.dev .
 
 script:
   # - docker run nimiq/docker-react npm run test -- --coverage

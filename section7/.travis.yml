@@ -1,3 +1,5 @@
+# NOTE: this file is indeed supposed to be in the root dir in order for Github to recongnize it.
+
 # language: generic  # In case of error: rakefile not found
 sudo: require
 services:

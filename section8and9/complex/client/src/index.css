@@ -3,3 +3,20 @@ body {
   padding: 0;
   font-family: sans-serif;
 }
+
+a.naked,
+a.naked:link,
+a.naked:visited,
+a.naked:hover,
+a.naked:active,
+button.naked {
+  color: inherit !important;
+  text-decoration: none;
+  font-size: inherit;
+  font-family: inherit;
+  font-weight: inherit;
+  line-height: inherit;
+}
+a:hover {
+  text-decoration: underline !important;
+}

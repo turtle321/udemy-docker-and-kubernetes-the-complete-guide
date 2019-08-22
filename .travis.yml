@@ -1,0 +1,40 @@
+# NOTE: this file is indeed supposed to be in the root dir in order for Github to recongnize it.
+
+language: generic # In case of error: rakefile not found
+sudo: required
+services:
+  - docker
+
+before_install:
+  - cd ./section8-9-10/complex # Change dir because that is where the src is. Usually you don't need this.
+  - docker build -t nimiq/react-test -f ./client/Dockerfile.dev ./client
+
+script:
+  # - docker run nimiq/react-test npm test -- --coverage
+  - docker run -e CI=true nimiq/react-test npm test
+
+after_success:
+  - docker build -t nimiq/multi-client ./client
+  - docker build -t nimiq/multi-nginx ./nginx
+  - docker build -t nimiq/multi-server ./server
+  - docker build -t nimiq/multi-worker ./worker
+  # Login in Docker CLI.
+  - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_ID" --password-stdin
+  # Publish on Docker Hub.
+  - docker push nimiq/multi-client
+  - docker push nimiq/multi-nginx
+  - docker push nimiq/multi-server
+  - docker push nimiq/multi-worker
+#
+# deploy:
+#   provider: elasticbeanstalk
+#   region: "eu-west-1"
+#   app: "docker-react"
+#   env: "DockerReact-env"
+#   bucket_name: "elasticbeanstalk-eu-west-1-477353422995"
+#   bucket_path: "docker-react"
+#   on:
+#     branch: master
+#   access_key_id: $AWS_ACCESS_KEY
+#   secret_access_key:
+#     secure: "$AWS_SECRET_KEY"

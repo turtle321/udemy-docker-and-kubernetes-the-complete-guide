@@ -1,0 +1,43 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: server-deployment
+spec:
+  replicas: 1
+  selector:
+    # How to find the objects to be update when this file changes.
+    matchLabels:
+      component: server
+  # Pods configuration.
+  template:
+    metadata:
+      labels:
+        # Keys and values are totally custom here.
+        # Using `component` as key is just a convention.
+        # It should indeed match with what's in spec > selector > matchLabels
+        component: server
+    spec:
+      containers:
+        - name: server
+          image: nimiq/multi-server
+          ports:
+            - containerPort: 5000
+          env:
+            - name: REDIS_HOST
+              value: redis-cluster-ip-service
+            - name: REDIS_PORT
+              value: "6379"
+            - name: PGUSER
+              value: postgres
+            - name: PGHOST
+              value: postgres-cluster-ip-service
+            - name: PGPORT
+              value: "5432"
+            - name: PGDATABASE
+              value: postgres
+            # Read this from a secret object.
+            - name: PGPASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: pgpassword # Name fo the secret object.
+                  key: PGPASSWORD # Key from the key=vaule format.

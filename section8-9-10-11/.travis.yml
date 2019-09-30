@@ -1,4 +1,4 @@
-# NOTE: this file is indeed supposed to be in the root dir in order for Github to recongnize it.
+# NOTE: this file is indeed supposed to be in the root dir in order for Github to recognize it.
 
 language: generic # In case of error: rakefile not found
 sudo: required
@@ -6,7 +6,7 @@ services:
   - docker
 
 before_install:
-  - cd ./section8-9-10/complex # Change dir because that is where the src is. Usually you don't need this.
+  - cd ./section8-9-10-11/complex # Change dir because that is where the src is. Usually you don't need this.
   - docker build -t nimiq/react-test -f ./client/Dockerfile.dev ./client
 
 script:

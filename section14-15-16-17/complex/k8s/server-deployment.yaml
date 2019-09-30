@@ -20,6 +20,9 @@ spec:
       containers:
         - name: server
           image: nimiq/multi-server
+          # Fix for Skaffold error like:
+          # rpc error: code = Unknown desc = Error response from daemon: manifest for nimiq/multi-server:47cdbc606a958b92059529238c01fb9e53694b0e5bc91e31f44d1676900d018d not found
+          imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 5000
           env:

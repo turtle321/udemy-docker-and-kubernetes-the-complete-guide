@@ -6,7 +6,8 @@ services:
   - docker
 env:
   global:
-    # The SHA is used in `deploy.sh`.
+    # The SHA is used in the Docker Hub push and  when deploying
+    # to Kubernetes, see `deploy.sh`.
     - SHA=$(git rev-parse HEAD)
     - CLOUDSDK_CORE_DISABLE_PROMPTS=1
 
@@ -36,15 +37,32 @@ script:
   - docker run -e CI=true nimiq/react-test npm test
 
 after_success:
-  # Dicker builds.
+  # Docker builds.
+  # Use 2 tags for each image: the classic lates plus the git SHA.
+  # The sha is added in order to tell kubernetes to use an image
+  # with a new tag.
+  # If instead we used latest, kubernetes would think to already
+  # have latest, even tho latest was updated.
+  # In other words: kubernetes does not re-apply an image if
+  # you push an updated version to Docker Hub. That's why you need
+  # to use unique tags.
+  # Note: $SHA is an anv var that we defined inside `.travis.yml`.
   - docker build -t nimiq/multi-client:latest -t nimiq/multi-client:$SHA -f ./client/Dockerfile ./client
-  # Publish on Docker Hub.
+  - docker build -t nimiq/multi-server:latest -t nimiq/multi-server:$SHA -f ./server/Dockerfile ./server
+  - docker build -t nimiq/multi-worker:latest -t nimiq/multi-worker:$SHA -f ./worker/Dockerfile ./worker
+
+  # Docker Hub push.
   - docker push nimiq/multi-client:latest
+  - docker push nimiq/multi-server:latest
+  - docker push nimiq/multi-worker:latest
   - docker push nimiq/multi-client:$SHA
-# deploy:
-#   # There is no Google Cloud Kubernetes provider in Travis CI, so we need
-#   # to do it ourself in a separate script.
-#   provider: script
-#   script: bash ./deploy.sh
-#   on:
-#     branch: master
+  - docker push nimiq/multi-server:$SHA
+  - docker push nimiq/multi-worker:$SHA
+
+deploy:
+  # There is no Google Cloud Kubernetes provider in Travis CI, so we need
+  # to do it ourself in a separate script.
+  provider: script
+  script: bash ./deploy.sh
+  on:
+    branch: master

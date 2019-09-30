@@ -11,7 +11,7 @@ env:
     - CLOUDSDK_CORE_DISABLE_PROMPTS=1
 
 before_install:
-  - cd ./section14-15/complex # Change dir because that is where the src is. Usually you don't need this.
+  - cd ./section14-15-16-17/complex # Change dir because that is where the src is. Usually you don't need this.
 
   # Install Google Cloud SDK, kubectl and authorize it.
   - curl https://sdk.cloud.google.com | bash > /dev/null;
